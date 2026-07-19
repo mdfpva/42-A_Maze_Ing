@@ -1,6 +1,9 @@
 WIDTH=20
-HEIGHT=20
-ENTRY=0,0
-EXIT=0,19
-OUTPUT_FILE=maze.txt
+ HEIGHT=20
+
+bajuras09
+ENTRY = 0,0
+EXIT=0,19#cona
+OUTPUT_FILE=maze.txt # bajuras
 PERFECT=True
+# ptreras
