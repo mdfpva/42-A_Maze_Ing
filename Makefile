@@ -11,7 +11,7 @@ debug:
 	python3 -m pdb a_maze_ing.py
 
 clean:
-	rm -rf __pycahche__ .mypy_cache .pytest_cache
+	rm -rf __pycache__ .mypy_cache .pytest_cache
 	find . -name "*.pyc" -delete
 
 lint:
