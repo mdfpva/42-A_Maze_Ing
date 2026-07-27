@@ -1,23 +1,34 @@
 MAIN = a_maze_ing.py
+PYTHON = python3
+CONFIG = config.txt
 MODULE = mazegen/
+VENV = .venv
 
-install:
-	pip install -r requirements.txt
+$(VENV):
+	$(PYTHON) -m venv $(VENV)
 
-run:
-	python3 a_maze_ing.py config.txt
+install: $(VENV)
+	$(VENV)/bin/pip install -r requirements.txt
+
+run: install
+	$(VENV)/bin/$(PYTHON)  $(MAIN) $(CONFIG)
 
 debug:
-	python3 -m pdb a_maze_ing.py
+	$(PYTHON) -m pdb $(MAIN)
 
 clean:
 	rm -rf __pycache__ .mypy_cache .pytest_cache
 	find . -name "*.pyc" -delete
 
+fclean: clean
+	rm -rf $(VENV) 
+
+re: fclean run
+
 lint:
-	flake8 .
-	mypy $(MAIN) $(MODULE) --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+	$(VENV)/bin/flake8 .
+	$(VENV)/bin/mypy $(MAIN) $(MODULE) --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 
 lint-strict:
-	flake8 .
-	mypy $(MAIN) $(MODULE) --strict
+	$(VENV)/bin/flake8 .
+	$(VENV)/bin/mypy $(MAIN) $(MODULE) --strict
