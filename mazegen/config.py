@@ -35,7 +35,10 @@ class Validate:
     def coordinate_field(
         value: str, max_x: int, max_y: int, field_name: str
     ) -> tuple[int, int]:
-        """Validate if a string is a valid coordinate within maze boundaries."""
+        """
+        Validate if a string is a valid coordinate
+        within maze boundaries.
+        """
         parts: list[str] = value.split(",")
         if len(parts) != 2:
             raise ConfigError(f"Wrong amount of values in '{field_name}'!")
