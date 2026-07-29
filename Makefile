@@ -32,3 +32,6 @@ lint:
 lint-strict:
 	$(VENV)/bin/flake8 .
 	$(VENV)/bin/mypy $(MAIN) $(MODULE) --strict
+
+test:
+	./$(VENV)/bin/$(PYTHON) -m pytest
