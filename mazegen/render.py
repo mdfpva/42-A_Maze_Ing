@@ -3,7 +3,7 @@
 from .maze import Maze, NORTH, EAST, SOUTH, WEST
 
 
-def debug_render(maze: Maze) -> None:
+def render(maze: Maze) -> None:
     """Print a rough ASCII view of the maze."""
     for y in range(maze.height):
         top = ""

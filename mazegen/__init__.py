@@ -1,7 +1,7 @@
 from .config import parse_config
 from .maze import Maze, MazeError, NORTH, SOUTH, EAST, WEST, DIRECTIONS
 from .generator import MazeGenerator
-from .render import debug_render
+from .render import render
 
 __all__ = [
     "parse_config",
@@ -13,5 +13,5 @@ __all__ = [
     "WEST",
     "DIRECTIONS",
     "MazeGenerator",
-    "debug_render"
+    "render"
 ]

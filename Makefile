@@ -4,6 +4,8 @@ CONFIG = config.txt
 MODULE = mazegen/
 VENV = .venv
 
+all: run
+
 $(VENV):
 	$(PYTHON) -m venv $(VENV)
 
@@ -12,8 +14,6 @@ install: $(VENV)
 
 run: install
 	$(VENV)/bin/$(PYTHON)  $(MAIN) $(CONFIG)
-
-all: run
 
 debug:
 	$(PYTHON) -m pdb $(MAIN)

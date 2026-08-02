@@ -2,7 +2,7 @@
 
 """A-Maze-ing: maze generator entry point."""
 import sys
-from mazegen import parse_config, MazeGenerator, debug_render
+from mazegen import parse_config, MazeGenerator, render
 
 
 def main() -> int:
@@ -17,7 +17,7 @@ def main() -> int:
 
     maze = generator.generate()
 
-    debug_render(maze)
+    render(maze)
 
     return 0
 
