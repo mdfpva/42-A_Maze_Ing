@@ -13,6 +13,8 @@ install: $(VENV)
 run: install
 	$(VENV)/bin/$(PYTHON)  $(MAIN) $(CONFIG)
 
+all: run
+
 debug:
 	$(PYTHON) -m pdb $(MAIN)
 
