@@ -3,6 +3,7 @@
 """A-Maze-ing: maze generator entry point."""
 import sys
 from mazegen.config import ConfigError, parse_config
+from mazegen.generator import MazeGenerator
 
 
 def main() -> int:
@@ -18,6 +19,7 @@ def main() -> int:
         return 1
 
     print(config)
+    newmaze = MazeGenerator(1, 1, 1)
     return 0
 
 
