@@ -2,24 +2,23 @@
 
 """A-Maze-ing: maze generator entry point."""
 import sys
-from mazegen.config import ConfigError, parse_config
-from mazegen.generator import MazeGenerator
+from mazegen import parse_config, MazeGenerator, debug_render
 
 
 def main() -> int:
-    """Run the maze generator program."""
-    if len(sys.argv) != 2:
-        print("Usage: python3 a_maze_ing.py config.txt", file=sys.stderr)
-        return 1
+    """Generate and display a maze."""
+    config = parse_config(sys.argv[1] if len(sys.argv) > 1 else "config.txt")
 
-    try:
-        config = parse_config(sys.argv[1])
-    except ConfigError as e:
-        print(e, file=sys.stderr)
-        return 1
+    generator = MazeGenerator(
+        width=config.width,
+        height=config.height,
+        seed=config.seed,
+    )
 
-    print(config)
-    newmaze = MazeGenerator(1, 1, 1)
+    maze = generator.generate()
+
+    debug_render(maze)
+
     return 0
 
 

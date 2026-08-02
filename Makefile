@@ -36,4 +36,6 @@ lint-strict:
 	$(VENV)/bin/mypy $(MAIN) $(MODULE) --strict
 
 test:
-	./$(VENV)/bin/$(PYTHON) -m pytest
+	./$(VENV)/bin/$(PYTHON) -m pytest -v
+
+.PHONY: all install run clean fclean re lint lint-strict test debug

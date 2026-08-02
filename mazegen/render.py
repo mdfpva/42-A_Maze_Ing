@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from .maze import Maze
+from .maze import Maze, NORTH, EAST, SOUTH, WEST
 
 
 def debug_render(maze: Maze) -> None:
