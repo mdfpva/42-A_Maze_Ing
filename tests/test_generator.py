@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from mazegen import MazeGenerator
+from mazegen import NORTH, EAST, SOUTH, WEST, DIRECTIONS
 
 
 def test_same_seed_produces_same_maze():
@@ -15,9 +16,6 @@ def test_different_seed_produces_different_maze():
     maze2 = MazeGenerator(10, 10, seed=2).generate()
 
     assert maze1.grid != maze2.grid
-
-
-from mazegen import NORTH, EAST, SOUTH, WEST, DIRECTIONS
 
 
 def flood_fill(maze):

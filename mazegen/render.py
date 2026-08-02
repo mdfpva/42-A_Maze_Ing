@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
+"""ASCII rendering utilities."""
 
-from .maze import Maze, NORTH, EAST, SOUTH, WEST
+from .maze import Maze, NORTH, EAST, WEST
 
 
 def render(maze: Maze) -> None:
