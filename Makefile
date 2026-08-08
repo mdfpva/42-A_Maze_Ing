@@ -13,6 +13,7 @@ install: $(VENV)
 	$(VENV)/bin/pip install -r requirements.txt
 
 run: install
+	clear
 	$(VENV)/bin/$(PYTHON)  $(MAIN) $(CONFIG)
 
 debug:
