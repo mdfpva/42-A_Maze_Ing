@@ -20,7 +20,7 @@ debug:
 	$(PYTHON) -m pdb $(MAIN)
 
 clean:
-	rm -rf __pycache__ .mypy_cache .pytest_cache
+	rm -rf **/__pycache__ .mypy_cache .pytest_cache
 	find . -name "*.pyc" -delete
 
 fclean: clean
