@@ -1,9 +1,9 @@
-__paycache__/
+__pycache__/
 *.py[cod]
 .venv/
 .mypy_cache/
 .pytest_cache/
-dist/
 build/
+dist/
 *.egg-info/
 maze.txt
