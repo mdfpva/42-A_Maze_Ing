@@ -2,6 +2,7 @@ MAIN = a_maze_ing.py
 PYTHON = python3
 CONFIG = config.txt
 MODULE = mazegen/
+TESTS = tests/
 VENV = .venv
 
 all: run
@@ -30,11 +31,11 @@ re: fclean run
 
 lint:
 	$(VENV)/bin/flake8 .
-	$(VENV)/bin/mypy $(MAIN) $(MODULE) --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+	$(VENV)/bin/mypy $(MAIN) $(MODULE) $(TESTS) --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 
 lint-strict:
 	$(VENV)/bin/flake8 .
-	$(VENV)/bin/mypy $(MAIN) $(MODULE) --strict
+	$(VENV)/bin/mypy $(MAIN) $(MODULE) $(TESTS) --strict
 
 test:
 	./$(VENV)/bin/$(PYTHON) -m pytest -v
