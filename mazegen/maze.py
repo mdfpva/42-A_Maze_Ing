@@ -1,12 +1,14 @@
-"""Maze grid with bitmask walls (N=1, E=2, S=4, W=8, set bit = closed)."""
+#!/usr/bin/env python3
+"""Maze grid structure with bitmask walls."""
 
+# Wall bits, matching the output file format
 NORTH = 1
 EAST = 2
 SOUTH = 4
 WEST = 8
-ALL_WALLS = NORTH | EAST | SOUTH | WEST
 
-# direction -> (dx, dy, opposite wall on the neighbour side)
+
+# Each direction knows its (dx, dy) and the opposite wall
 DIRECTIONS: dict[int, tuple[int, int, int]] = {
     NORTH: (0, -1, SOUTH),
     EAST: (1, 0, WEST),
@@ -14,75 +16,80 @@ DIRECTIONS: dict[int, tuple[int, int, int]] = {
     WEST: (-1, 0, EAST),
 }
 
-LETTERS: dict[int, str] = {NORTH: "N", EAST: "E", SOUTH: "S", WEST: "W"}
-
 
 class MazeError(Exception):
-    """Raised on invalid maze operations."""
+    def __init__(self, msg: str = "Unkown MazeError!") -> None:
+        super().__init__(msg)
 
 
 class Maze:
-    """A rectangular grid of cells whose walls are stored as bitmasks.
-
-    ``grid[y][x]`` holds the wall bits of cell ``(x, y)``; a set bit
-    means the wall is closed.  ``blocked`` holds cells reserved for the
-    "42" pattern: they keep their 4 walls and are never carved into.
-    """
-
     def __init__(self, width: int, height: int) -> None:
-        """Create a ``width`` x ``height`` grid with every wall closed."""
-        if width < 1 or height < 1:
-            raise MazeError("Maze dimensions must be positive")
-        self.width = width
-        self.height = height
         self.grid: list[list[int]] = [
-            [ALL_WALLS] * width for _ in range(height)
+            [
+                NORTH | EAST | SOUTH | WEST for _ in range(width)
+            ] for _ in range(height)
         ]
-        self.blocked: set[tuple[int, int]] = set()
+        self.width: int = width
+        self.height: int = height
 
     def in_bounds(self, x: int, y: int) -> bool:
-        """Return True if ``(x, y)`` is a cell of the grid."""
-        return 0 <= x < self.width and 0 <= y < self.height
-
-    def has_wall(self, x: int, y: int, direction: int) -> bool:
-        """Return True if the wall on ``direction`` of ``(x, y)`` is closed."""
-        return bool(self.grid[y][x] & direction)
+        if 0 <= x < self.width:
+            if 0 <= y < self.height:
+                return True
+        return False
 
     def open_wall(self, x: int, y: int, direction: int) -> None:
-        """Open a wall and the matching wall of the neighbour."""
-        nx, ny = self._neighbour(x, y, direction)
-        _, _, opposite = DIRECTIONS[direction]
+        if direction not in DIRECTIONS:
+            raise MazeError(f"Invalid direction: {direction}")
+        if not self.in_bounds(x, y):
+            raise MazeError(f"Position ({x}, {y}) out of bound!")
+        dx, dy, opposite = DIRECTIONS[direction]
+        if not self.in_bounds(x + dx, y + dy):
+            raise MazeError("Opposite "
+                            f"Position ({x + dx}, {y + dy})"
+                            " out of bound!")
         self.grid[y][x] &= ~direction
-        self.grid[ny][nx] &= ~opposite
+        self.grid[y + dy][x + dx] &= ~opposite
 
-    def close_wall(self, x: int, y: int, direction: int) -> None:
-        """Close a wall and the matching wall of the neighbour."""
-        nx, ny = self._neighbour(x, y, direction)
-        _, _, opposite = DIRECTIONS[direction]
-        self.grid[y][x] |= direction
-        self.grid[ny][nx] |= opposite
+    def has_wall(self, x: int, y: int, direction: int) -> bool:
+        return bool(self.grid[y][x] & direction)
 
     def neighbors(self, x: int, y: int) -> list[tuple[int, int, int]]:
-        """Return in-bounds neighbours of ``(x, y)`` as (nx, ny, direction)."""
-        result: list[tuple[int, int, int]] = []
+        """Return valid neighbors as (nx, ny, direction) tuples."""
+        result = []
         for direction, (dx, dy, _) in DIRECTIONS.items():
             nx, ny = x + dx, y + dy
             if self.in_bounds(nx, ny):
                 result.append((nx, ny, direction))
         return result
 
-    def open_directions(self, x: int, y: int) -> list[int]:
-        """Return the directions whose wall is open at ``(x, y)``."""
-        return [d for d in DIRECTIONS if not self.has_wall(x, y, d)]
 
-    def _neighbour(self, x: int, y: int, direction: int) -> tuple[int, int]:
-        """Validate a wall operation and return the neighbour cell."""
-        if direction not in DIRECTIONS:
-            raise MazeError(f"Invalid direction: {direction}")
-        if not self.in_bounds(x, y):
-            raise MazeError(f"Cell ({x}, {y}) out of bounds")
-        dx, dy, _ = DIRECTIONS[direction]
-        nx, ny = x + dx, y + dy
-        if not self.in_bounds(nx, ny):
-            raise MazeError("Cannot open the external border")
-        return nx, ny
+if __name__ == "__main__":
+    maze: Maze = Maze(5, 5)
+    print(maze.grid)
+    print()
+    print(maze.in_bounds(0, 0))
+    print(maze.in_bounds(1, 1))
+    print(maze.in_bounds(4, 4))
+    print(maze.in_bounds(5, 5))
+    print(maze.in_bounds(6, 6))
+    print()
+    maze.open_wall(3, 3, NORTH)
+    for row in maze.grid:
+        print(row)
+    try:
+        maze.open_wall(4, 4, SOUTH)
+    except MazeError as e:
+        print(f"{type(e).__name__}: {e}")
+    try:
+        maze.open_wall(5, 5, SOUTH)
+    except MazeError as e:
+        print(f"{type(e).__name__}: {e}")
+    print()
+    for i in (1, 2, 4, 8):
+        print(maze.has_wall(1, 1, i))
+    print()
+    for i in (1, 2, 4, 8):
+        maze.open_wall(1, 1, i)
+    for i in (1, 2, 4, 8):
+        print(maze.has_wall(1, 1, i))

@@ -1,100 +1,135 @@
-"""Configuration file parsing and validation."""
+#!/usr/bin/env python3
+"""Configuration parser and validator for the maze generator."""
 
 from dataclasses import dataclass
+
+MIN_WIDTH = 9
+MIN_HEIGHT = 6
 
 
 class ConfigError(Exception):
     """Raised when the configuration file is invalid."""
 
+    def __init__(self, message: str = "Configuration Error") -> None:
+        """Initialize the exception with a message."""
+        super().__init__(message)
 
-@dataclass(frozen=True)
+
+class Validate:
+    """Static methods to validate and convert configuration fields."""
+
+    @staticmethod
+    def int_field(value_str: str, min_value: int, field_name: str) -> int:
+        """Validate if a string is a valid integer above the minimum value."""
+        try:
+            number = int(value_str)
+        except ValueError as e:
+            raise ConfigError(f"'{field_name}' must be an integer!") from e
+
+        if number <= min_value:
+            msg = f"'{field_name}' must be at least {min_value + 1}!"
+            raise ConfigError(msg)
+        return number
+
+    @staticmethod
+    def coordinate_field(
+        value: str, max_x: int, max_y: int, field_name: str
+    ) -> tuple[int, int]:
+        """
+        Validate if a string is a valid coordinate
+        within maze boundaries.
+        """
+        parts: list[str] = value.split(",")
+        if len(parts) != 2:
+            raise ConfigError(f"Wrong amount of values in '{field_name}'!")
+
+        try:
+            x = int(parts[0])
+            y = int(parts[1])
+        except ValueError as e:
+            msg = f"'{field_name}' must be in the following format: x,y"
+            raise ConfigError(msg) from e
+
+        if x < 0 or y < 0:
+            raise ConfigError(f"'{field_name}' must not be negative!")
+        if x >= max_x or y >= max_y:
+            msg = (
+                f"'{field_name}' position ({x},{y}) is out of "
+                f"the maze boundaries ({max_x}x{max_y})!"
+            )
+            raise ConfigError(msg)
+        return (x, y)
+
+    @staticmethod
+    def bool_field(value: str, field_name: str) -> bool:
+        """Validate and convert a string into a boolean value."""
+        if value.lower() in ("true", "1", "yes"):
+            return True
+        if value.lower() in ("false", "0", "no"):
+            return False
+        raise ConfigError(f"'{field_name}': value must be boolean!")
+
+
+@dataclass
 class Config:
-    """A validated maze configuration."""
+    """Data class representing a valid maze configuration."""
 
     width: int
     height: int
-    entry: tuple[int, int]
-    exit: tuple[int, int]
+    entry_position: tuple[int, int]
+    exit_position: tuple[int, int]
     output_file: str
     perfect: bool
     seed: int | None = None
 
 
-REQUIRED = ("WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT")
-
-
-def _to_int(value: str, key: str) -> int:
-    """Convert ``value`` to int or raise a clear ConfigError."""
-    try:
-        return int(value)
-    except ValueError as exc:
-        raise ConfigError(f"{key} must be an integer, got '{value}'") from exc
-
-
-def _to_size(value: str, key: str) -> int:
-    """Convert ``value`` to a positive dimension."""
-    number = _to_int(value, key)
-    if number < 1:
-        raise ConfigError(f"{key} must be at least 1, got {number}")
-    return number
-
-
-def _to_coords(value: str, key: str, width: int,
-               height: int) -> tuple[int, int]:
-    """Convert 'x,y' to coordinates inside the maze bounds."""
-    parts = value.split(",")
-    if len(parts) != 2:
-        raise ConfigError(f"{key} must use the format x,y, got '{value}'")
-    x, y = _to_int(parts[0], key), _to_int(parts[1], key)
-    if not (0 <= x < width and 0 <= y < height):
-        raise ConfigError(
-            f"{key} ({x},{y}) is outside the {width}x{height} maze")
-    return x, y
-
-
-def _to_bool(value: str, key: str) -> bool:
-    """Convert a True/False string to bool."""
-    lowered = value.lower()
-    if lowered in ("true", "1", "yes"):
-        return True
-    if lowered in ("false", "0", "no"):
-        return False
-    raise ConfigError(f"{key} must be True or False, got '{value}'")
-
-
-def _read_pairs(path: str) -> dict[str, str]:
-    """Read KEY=VALUE pairs from ``path``, ignoring comments."""
-    pairs: dict[str, str] = {}
-    try:
-        with open(path, "r", encoding="utf-8") as handle:
-            for raw in handle:
-                line = raw.split("#", 1)[0].strip()
-                if not line:
-                    continue
-                if "=" not in line:
-                    raise ConfigError(
-                        f"Invalid line (missing '='): '{raw.strip()}'")
-                key, value = line.split("=", 1)
-                pairs[key.strip()] = value.strip()
-    except OSError as exc:
-        raise ConfigError(f"Cannot read '{path}': {exc}") from exc
-    return pairs
-
-
 def parse_config(path: str) -> Config:
-    """Parse and validate the configuration file at ``path``."""
-    pairs = _read_pairs(path)
-    missing = [key for key in REQUIRED if key not in pairs]
+    """Parse a configuration file and return a valid Config object."""
+    config_dict: dict[str, str] = {}
+    try:
+        with open(path, "r") as config_fd:
+            config_text: str = config_fd.read()
+    except OSError as e:
+        raise ConfigError(f"Cannot read configuration file: {e}") from e
+
+    config_data: list[str] = config_text.split("\n")
+    for line in config_data:
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if "#" in line:
+            line = line.split("#")[0].strip()
+        if "=" not in line:
+            continue
+
+        key, value = line.split("=", 1)
+        config_dict[key.strip()] = value.strip()
+
+    required = ["WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT"]
+    missing = [k for k in required if k not in config_dict]
     if missing:
         raise ConfigError(f"Missing required keys: {', '.join(missing)}")
-    width = _to_size(pairs["WIDTH"], "WIDTH")
-    height = _to_size(pairs["HEIGHT"], "HEIGHT")
-    entry = _to_coords(pairs["ENTRY"], "ENTRY", width, height)
-    exit_ = _to_coords(pairs["EXIT"], "EXIT", width, height)
-    if entry == exit_:
-        raise ConfigError("ENTRY and EXIT must be different")
-    if not pairs["OUTPUT_FILE"]:
-        raise ConfigError("OUTPUT_FILE must not be empty")
-    seed = _to_int(pairs["SEED"], "SEED") if "SEED" in pairs else None
-    return Config(width, height, entry, exit_, pairs["OUTPUT_FILE"],
-                  _to_bool(pairs["PERFECT"], "PERFECT"), seed)
+
+    width = Validate.int_field(config_dict["WIDTH"], MIN_WIDTH, "WIDTH")
+    height = Validate.int_field(config_dict["HEIGHT"], MIN_HEIGHT, "HEIGHT")
+    entry = Validate.coordinate_field(
+        config_dict["ENTRY"], width, height, "ENTRY"
+    )
+    exit_pos = Validate.coordinate_field(
+        config_dict["EXIT"], width, height, "EXIT"
+    )
+
+    if entry == exit_pos:
+        raise ConfigError("ENTRY and EXIT positions must be different!")
+
+    perfect = Validate.bool_field(config_dict["PERFECT"], "PERFECT")
+    output_file = config_dict["OUTPUT_FILE"]
+
+    seed: int | None = None
+    if "SEED" in config_dict:
+        try:
+            seed = int(config_dict["SEED"])
+        except ValueError as e:
+            raise ConfigError("'SEED' must be an integer!") from e
+
+    return Config(width, height, entry, exit_pos, output_file, perfect, seed)
