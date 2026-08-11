@@ -18,7 +18,7 @@ run: install
 	$(VENV)/bin/$(PYTHON)  $(MAIN) $(CONFIG)
 
 debug:
-	$(PYTHON) -m pdb $(MAIN)
+	$(PYTHON) -m pdb $(MAIN) $(CONFIG)
 
 clean:
 	rm -rf **/__pycache__ .mypy_cache .pytest_cache
