@@ -81,3 +81,21 @@ def test_perfect_maze_has_dead_ends() -> None:
     )
 
     assert dead_ends > 0
+
+
+def test_braided_maze_has_no_dead_ends() -> None:
+    """The playable (non-perfect) maze should have no dead-ends."""
+    maze = MazeGenerator(15, 10, seed=1, perfect=False).generate()
+    dead_ends = sum(
+        1
+        for y in range(10)
+        for x in range(15)
+        if len(maze.open_directions(x, y)) == 1
+    )
+    assert dead_ends == 0
+
+
+def test_braided_maze_is_connected() -> None:
+    """Braiding only opens walls, so the maze stays fully connected."""
+    maze = MazeGenerator(15, 10, seed=1, perfect=False).generate()
+    assert len(flood_fill(maze)) == maze.width * maze.height
