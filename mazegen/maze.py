@@ -64,32 +64,11 @@ class Maze:
         return result
 
 
-if __name__ == "__main__":
-    maze: Maze = Maze(5, 5)
-    print(maze.grid)
-    print()
-    print(maze.in_bounds(0, 0))
-    print(maze.in_bounds(1, 1))
-    print(maze.in_bounds(4, 4))
-    print(maze.in_bounds(5, 5))
-    print(maze.in_bounds(6, 6))
-    print()
-    maze.open_wall(3, 3, NORTH)
-    for row in maze.grid:
-        print(row)
-    try:
-        maze.open_wall(4, 4, SOUTH)
-    except MazeError as e:
-        print(f"{type(e).__name__}: {e}")
-    try:
-        maze.open_wall(5, 5, SOUTH)
-    except MazeError as e:
-        print(f"{type(e).__name__}: {e}")
-    print()
-    for i in (1, 2, 4, 8):
-        print(maze.has_wall(1, 1, i))
-    print()
-    for i in (1, 2, 4, 8):
-        maze.open_wall(1, 1, i)
-    for i in (1, 2, 4, 8):
-        print(maze.has_wall(1, 1, i))
+    def open_directions(self, x: int, y: int) -> list[int]:
+        """Return the directions whose wall is open at (x, y)."""
+        directions = [NORTH, EAST, SOUTH, WEST]
+        result = []
+        for direction in directions:
+            if not self.has_wall(x, y, direction):
+                result.append(direction)
+        return result
