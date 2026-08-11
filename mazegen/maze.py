@@ -63,7 +63,6 @@ class Maze:
                 result.append((nx, ny, direction))
         return result
 
-
     def open_directions(self, x: int, y: int) -> list[int]:
         """Return the directions whose wall is open at (x, y)."""
         directions = [NORTH, EAST, SOUTH, WEST]

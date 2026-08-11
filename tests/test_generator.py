@@ -62,3 +62,22 @@ def test_perfect_maze() -> None:
     cells = maze.width * maze.height
 
     assert passages == cells - 1
+
+
+def test_perfect_maze_has_dead_ends() -> None:
+    """Check that the perfect maze contains dead-ends."""
+    maze = MazeGenerator(
+        15,
+        10,
+        seed=1,
+        perfect=True,
+    ).generate()
+
+    dead_ends = sum(
+        1
+        for y in range(10)
+        for x in range(15)
+        if len(maze.open_directions(x, y)) == 1
+    )
+
+    assert dead_ends > 0

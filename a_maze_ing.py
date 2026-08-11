@@ -31,6 +31,7 @@ def main() -> int:
         config.width,
         config.height,
         config.seed,
+        config.perfect
     ).generate()
 
     render(maze)
