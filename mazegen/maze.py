@@ -71,3 +71,21 @@ class Maze:
             if not self.has_wall(x, y, direction):
                 result.append(direction)
         return result
+
+    def block_is_open(self, bx: int, by: int) -> bool:
+        """Return True if the 3x3 block at (bx, by) has no inner wall."""
+        for y in range(by, by + 3):
+            for x in range(bx, bx + 3):
+                if x < bx + 2 and self.has_wall(x, y, EAST):
+                    return False
+                if y < by + 2 and self.has_wall(x, y, SOUTH):
+                    return False
+        return True
+
+    def has_open_3x3(self) -> bool:
+        """Return True if any fully-open 3x3 block exists."""
+        for by in range(self.height - 2):
+            for bx in range(self.width - 2):
+                if self.block_is_open(bx, by):
+                    return True
+        return False

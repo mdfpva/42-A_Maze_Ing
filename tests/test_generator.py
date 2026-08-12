@@ -99,3 +99,10 @@ def test_braided_maze_is_connected() -> None:
     """Braiding only opens walls, so the maze stays fully connected."""
     maze = MazeGenerator(15, 10, seed=1, perfect=False).generate()
     assert len(flood_fill(maze)) == maze.width * maze.height
+
+
+def test_playable_mode_has_no_open_3x3() -> None:
+    """The braided maze must never contain a fully-open 3x3 area."""
+    for seed in range(20):
+        maze = MazeGenerator(20, 15, seed=seed, perfect=False).generate()
+        assert not maze.has_open_3x3()
