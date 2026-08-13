@@ -17,6 +17,9 @@ DIRECTIONS: dict[int, tuple[int, int, int]] = {
 }
 
 
+LETTERS: dict[int, str] = {NORTH: "N", EAST: "E", SOUTH: "S", WEST: "W"}
+
+
 class MazeError(Exception):
     def __init__(self, msg: str = "Unkown MazeError!") -> None:
         super().__init__(msg)

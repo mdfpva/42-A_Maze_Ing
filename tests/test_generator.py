@@ -106,3 +106,19 @@ def test_playable_mode_has_no_open_3x3() -> None:
     for seed in range(20):
         maze = MazeGenerator(20, 15, seed=seed, perfect=False).generate()
         assert not maze.has_open_3x3()
+
+def count_loops(maze: Maze) -> int:
+    """Return passages - (cells - 1): 0 for a tree, N for N loops."""
+    passages = sum(
+        len(maze.open_directions(x, y))
+        for y in range(maze.height) for x in range(maze.width)
+    ) // 2
+    cells = maze.width * maze.height
+    return passages - (cells - 1)
+
+
+def test_playable_mode_has_at_least_two_loops() -> None:
+    """The playable board must offer >= 2 independent routes."""
+    for seed in range(20):
+        maze = MazeGenerator(20, 15, seed=seed, perfect=False).generate()
+        assert count_loops(maze) >= 2
