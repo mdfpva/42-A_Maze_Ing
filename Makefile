@@ -5,7 +5,7 @@ MODULE = mazegen/
 TESTS = tests/
 VENV = .venv
 
-all: run
+all: $(VENV) install run
 
 $(VENV):
 	$(PYTHON) -m venv $(VENV)
@@ -13,7 +13,7 @@ $(VENV):
 install: $(VENV)
 	$(VENV)/bin/pip install -r requirements.txt
 
-run: install
+run:
 	clear
 	$(VENV)/bin/$(PYTHON)  $(MAIN) $(CONFIG)
 

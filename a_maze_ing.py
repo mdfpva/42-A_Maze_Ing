@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 """A-Maze-ing: maze generator entry point."""
 
 import sys
@@ -9,6 +8,9 @@ from mazegen import (
     MazeGenerator,
     render,
     parse_config,
+    shortest_path,
+    write_maze,
+    OutputError
 )
 
 
@@ -33,6 +35,27 @@ def main() -> int:
         config.seed,
         config.perfect
     ).generate()
+
+    solution = shortest_path(
+        maze,
+        config.entry_position,
+        config.exit_position
+    )
+    if solution is None:
+        print("Error: no path between entry and exit", file=sys.stderr)
+        return 1
+
+    try:
+        write_maze(
+            config.output_file,
+            maze,
+            config.entry_position,
+            config.exit_position,
+            solution
+        )
+    except OutputError as error:
+        print(f"Output error: {error}", file=sys.stderr)
+        return 1
 
     render(maze)
     return 0

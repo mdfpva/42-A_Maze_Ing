@@ -8,3 +8,5 @@ build/
 *.egg-info/
 maze.txt
 maze_analyzer.py
+maze_perfect.txt
+maze.txt

@@ -3,6 +3,7 @@ from .maze import Maze, MazeError, NORTH, SOUTH, EAST, WEST, DIRECTIONS
 from .generator import MazeGenerator
 from .render import render
 from .solver import shortest_path
+from .output import write_maze, OutputError
 
 __all__ = [
     "parse_config",
@@ -16,5 +17,7 @@ __all__ = [
     "DIRECTIONS",
     "MazeGenerator",
     "render",
-    "shortest_path"
+    "shortest_path",
+    "write_maze",
+    "OutputError"
 ]
