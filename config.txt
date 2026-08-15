@@ -3,7 +3,7 @@ WIDTH=10
 
 bajuras09
 ENTRY = 0,0
-EXIT=0,9#cona
+EXIT=9,9#cona
 OUTPUT_FILE=maze.txt # bajuras
-PERFECT=0
+PERFECT=1
 # ptreras

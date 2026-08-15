@@ -26,7 +26,7 @@ class Validate:
         except ValueError as e:
             raise ConfigError(f"'{field_name}' must be an integer!") from e
 
-        if number <= min_value:
+        if number < min_value:
             msg = f"'{field_name}' must be at least {min_value + 1}!"
             raise ConfigError(msg)
         return number
