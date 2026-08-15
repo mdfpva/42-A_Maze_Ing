@@ -11,12 +11,15 @@ class MazeGenerator:
 
     def __init__(self, width: int, height: int,
                  seed: int | None = None,
-                 perfect: bool = True) -> None:
+                 perfect: bool = True,
+                 blocked: set[tuple[int, int]] | None = None
+                 ) -> None:
         """Store dimensions and initialize the random source."""
         self.width = width
         self.height = height
         self._rng = random.Random(seed)
         self.perfect = perfect
+        self.blocked = blocked if blocked else set()
 
     def _braid(self, maze: Maze) -> None:
         """Open an extra wall from each dead-end when possible."""
@@ -29,6 +32,7 @@ class MazeGenerator:
                     direction
                     for nx, ny, direction in maze.neighbors(x, y)
                     if maze.has_wall(x, y, direction)
+                    and (nx, ny) not in self.blocked
                 ]
 
                 if candidates:
@@ -49,7 +53,7 @@ class MazeGenerator:
             unvisited = [
                 (nx, ny, direction)
                 for nx, ny, direction in maze.neighbors(x, y)
-                if (nx, ny) not in visited
+                if (nx, ny) not in visited and (nx, ny) not in self.blocked
             ]
 
             if unvisited:

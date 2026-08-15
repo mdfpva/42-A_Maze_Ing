@@ -9,8 +9,15 @@ PATTERN_WIDTH = 7   # 3 + 1 gap + 3
 PATTERN_HEIGHT = 5
 
 
+def fits(width: int, height: int) -> bool:
+    """Return True if the "42" fits (with a one-cell margin)."""
+    return width >= 9 and height >= 7
+
+
 def pattern_cells(width: int, height: int) -> set[tuple[int, int]]:
     """Return the set of blocked cells for a centred "42"."""
+    if not fits(width, height):
+        return set()
     ox = (width - PATTERN_WIDTH) // 2
     oy = (height - PATTERN_HEIGHT) // 2
     cells: set[tuple[int, int]] = set()

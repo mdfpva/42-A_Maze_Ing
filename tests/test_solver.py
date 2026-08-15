@@ -4,7 +4,11 @@
 from mazegen import MazeGenerator, shortest_path, Maze
 from mazegen import NORTH, EAST, SOUTH, WEST
 
-def follow_path(maze: Maze, start: tuple[int, int], path: str) -> tuple[int, int]:
+
+def follow_path(maze: Maze,
+                start: tuple[int, int],
+                path: str
+                ) -> tuple[int, int]:
     """Walk a letter path from start, asserting every step is open."""
     steps = {"N": (0, -1, NORTH), "E": (1, 0, EAST),
              "S": (0, 1, SOUTH), "W": (-1, 0, WEST)}

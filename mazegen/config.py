@@ -3,8 +3,8 @@
 
 from dataclasses import dataclass
 
-MIN_WIDTH = 9
-MIN_HEIGHT = 6
+MIN_WIDTH = 2
+MIN_HEIGHT = 2
 
 
 class ConfigError(Exception):

@@ -10,7 +10,8 @@ from mazegen import (
     parse_config,
     shortest_path,
     write_maze,
-    OutputError
+    OutputError,
+    pattern_cells
 )
 
 
@@ -29,11 +30,27 @@ def main() -> int:
         print(f"Config error: {error}", file=sys.stderr)
         return 1
 
+    blocked = pattern_cells(
+        config.width,
+        config.height
+    )
+    if not blocked:
+        print("Note: maze too small for the '42' pattern; omitted.")
+    if config.entry_position in blocked:
+        print(f"Error: ENTRY {config.entry_position} is inside the "
+              f"'42' pattern", file=sys.stderr)
+        return 1
+    if config.exit_position in blocked:
+        print(f"Error: EXIT {config.exit_position} is inside the "
+              f"'42' pattern", file=sys.stderr)
+        return 1
+
     maze = MazeGenerator(
         config.width,
         config.height,
         config.seed,
-        config.perfect
+        config.perfect,
+        blocked
     ).generate()
 
     solution = shortest_path(

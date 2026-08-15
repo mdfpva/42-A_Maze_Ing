@@ -107,6 +107,7 @@ def test_playable_mode_has_no_open_3x3() -> None:
         maze = MazeGenerator(20, 15, seed=seed, perfect=False).generate()
         assert not maze.has_open_3x3()
 
+
 def count_loops(maze: Maze) -> int:
     """Return passages - (cells - 1): 0 for a tree, N for N loops."""
     passages = sum(
