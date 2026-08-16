@@ -1,7 +1,7 @@
 from .config import parse_config, ConfigError
 from .maze import Maze, MazeError, NORTH, SOUTH, EAST, WEST, DIRECTIONS
 from .generator import MazeGenerator
-from .render import render
+from .render import render, path_cells
 from .solver import shortest_path
 from .output import write_maze, OutputError
 from .pattern import pattern_cells
@@ -21,5 +21,6 @@ __all__ = [
     "shortest_path",
     "write_maze",
     "OutputError",
-    "pattern_cells"
+    "pattern_cells",
+    "path_cells"
 ]

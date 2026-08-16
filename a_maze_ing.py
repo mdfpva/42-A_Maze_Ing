@@ -74,7 +74,11 @@ def main() -> int:
         print(f"Output error: {error}", file=sys.stderr)
         return 1
 
-    render(maze)
+    render(
+        maze,
+        config.entry_position,
+        config.exit_position
+    )
     return 0
 
 
