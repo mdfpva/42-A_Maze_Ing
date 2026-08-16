@@ -1,4 +1,4 @@
-from .config import parse_config, ConfigError
+from .config import parse_config, ConfigError, Config
 from .maze import Maze, MazeError, NORTH, SOUTH, EAST, WEST, DIRECTIONS
 from .generator import MazeGenerator
 from .render import render, path_cells
@@ -9,6 +9,7 @@ from .pattern import pattern_cells
 __all__ = [
     "parse_config",
     "ConfigError",
+    "Config",
     "Maze",
     "MazeError",
     "NORTH",

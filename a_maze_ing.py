@@ -11,8 +11,50 @@ from mazegen import (
     shortest_path,
     write_maze,
     OutputError,
-    pattern_cells
+    pattern_cells,
+    Config
 )
+
+
+CLEAR = "\033[2J\033[H"
+
+
+def interact(config: Config) -> None:
+    """Run the interactive display loop."""
+    blocked = pattern_cells(config.width, config.height)
+    show_path = False
+    color = 0
+    maze = MazeGenerator(config.width, config.height, config.seed,
+                         config.perfect, blocked).generate()
+    solution = shortest_path(maze, config.entry_position,
+                             config.exit_position)
+
+    while True:
+        print(CLEAR, end="")
+        path = solution if show_path else None
+        render(maze, config.entry_position, config.exit_position,
+               path, color)
+        print("\n1. Regenerate  2. Show/Hide path  "
+              "3. Change color  4. Quit")
+        try:
+            choice = input("Choice? ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print()
+            break
+
+        if choice == "1":
+            maze = MazeGenerator(config.width, config.height, None,
+                                 config.perfect, blocked).generate()
+            solution = shortest_path(maze, config.entry_position,
+                                     config.exit_position)
+        elif choice == "2":
+            show_path = not show_path
+        elif choice == "3":
+            color += 1
+        elif choice == "4":
+            break
+        else:
+            print("Invalid choice.")
 
 
 def main() -> int:
@@ -74,11 +116,7 @@ def main() -> int:
         print(f"Output error: {error}", file=sys.stderr)
         return 1
 
-    render(
-        maze,
-        config.entry_position,
-        config.exit_position
-    )
+    interact(config)
     return 0
 
 
