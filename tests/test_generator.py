@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
+"""Tests for the maze generator (perfect and playable modes)."""
 
 from mazegen import MazeGenerator, Maze
 from mazegen import NORTH, EAST, SOUTH, WEST, DIRECTIONS
 
 
 def test_same_seed_produces_same_maze() -> None:
+    """The same seed must always produce an identical maze."""
     maze1 = MazeGenerator(10, 10, seed=42).generate()
     maze2 = MazeGenerator(10, 10, seed=42).generate()
 
@@ -12,6 +14,7 @@ def test_same_seed_produces_same_maze() -> None:
 
 
 def test_different_seed_produces_different_maze() -> None:
+    """Different seeds should produce different mazes."""
     maze1 = MazeGenerator(10, 10, seed=1).generate()
     maze2 = MazeGenerator(10, 10, seed=2).generate()
 
@@ -19,6 +22,7 @@ def test_different_seed_produces_different_maze() -> None:
 
 
 def flood_fill(maze: Maze) -> set[tuple[int, int]]:
+    """Return every cell reachable from (0, 0) through open walls."""
     visited = {(0, 0)}
     stack = [(0, 0)]
 
@@ -40,6 +44,7 @@ def flood_fill(maze: Maze) -> set[tuple[int, int]]:
 
 
 def test_maze_is_connected() -> None:
+    """Every cell of a perfect maze must be reachable from (0, 0)."""
     maze = MazeGenerator(20, 20, seed=42).generate()
 
     visited = flood_fill(maze)
@@ -48,6 +53,7 @@ def test_maze_is_connected() -> None:
 
 
 def test_perfect_maze() -> None:
+    """A perfect maze has exactly cells - 1 passages (a spanning tree)."""
     maze = MazeGenerator(15, 15, seed=42).generate()
 
     removed = 0
