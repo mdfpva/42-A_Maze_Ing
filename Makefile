@@ -25,7 +25,7 @@ clean:
 	find . -name "*.pyc" -delete
 
 fclean: clean
-	rm -rf $(VENV) 
+	rm -rf $(VENV) build dist mazegen.egg-info
 
 re: fclean run
 
@@ -40,4 +40,10 @@ lint-strict:
 test:
 	./$(VENV)/bin/$(PYTHON) -m pytest -v
 
-.PHONY: all install run clean fclean re lint lint-strict test debug
+build: $(VENV) mazegen
+	.venv/bin/pip install build
+	.venv/bin/python3 -m build --wheel
+	cp dist/mazegen-1.0.0-py3-none-any.whl .
+	ls *.whl
+
+.PHONY: all install run clean fclean re lint lint-strict test debug build
